@@ -1,3 +1,27 @@
 apiVersion: v1
 kind: ConfigMap
-#setup configmap
+metadata:
+  name: {{ include "quorum.fullname" . }}-configmap
+  labels:
+    app.kubernetes.io/name: {{ include "quorum.name" . }}
+    helm.sh/chart: {{ include "quorum.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  - name: NODENAME 
+    valueFrom:
+      fieldRef:
+        apiVersion: v1
+        fieldPath: metadata.name   
+  # MASTER_IP: master node IP 
+  WHISPER_PORT: 22001
+  RAFT_PORT:  22003
+  RPC_PORT: 22000
+  CONSTELLATION_PORT: 
+  THIS_NODEMANAGER_PORT: 22004
+  MAIN_NODEMANAGER_PORT:
+  WS_PORT: 22005
+  - name: CURRENT_IP
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP

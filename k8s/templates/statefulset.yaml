@@ -1,1 +1,56 @@
-# add statefulset
+apiVersion: apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: quorom-set
+  labels:
+    app.kubernetes.io/name: quorom-set
+spec:
+  replicas: {{ .Values.replicas }}
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        role: follower
+    spec:
+      containers:
+        - name: {{ .Chart.name}}
+          image: syneblock/quorum-maker:2.2.0_2.6.1
+          imagePullPolicy: {{ .Values.image.pullPolicy}}
+          # args: []
+          envFrom:
+            - configMapRef:
+                name: {{ include "quorum.fullname" . }}-configmap
+            ports:
+              - port: 22000
+                targetPort: 22000
+              - port: 22002
+                targetPort: 22002
+              - port: 22003
+                targetPort: 22003
+              - port: 22004
+                targetPort: 22004
+              - port: 22005
+                targetPort: 22005
+              - port: 15475
+                targetPort: 15475
+            # volumeMounts:
+            #   - name: node
+            #     mountPath: {{ .Values.rootDir }}/node
+            #   - name: home
+            #     mountPath: {{.Values.rootDir }}/home
+            #   - name: master
+            #     mountPath: {{.Values.rootDir }}/master
+            # volumes:
+            #   - name: node
+            #     hostPath:
+            #       path: ../../quorum-maker/keschain/node
+            #   - name: home
+            #     hostPath:
+            #       path: ../../quorum-maker/keschain/node
+            #   - name: master
+            #     hostPath:
+            #       path: ../../quorum-maker/keschain/node
+
+  # initcontainers
+          
